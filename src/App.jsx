@@ -1,4 +1,3 @@
-// import { useState, useEffect } from 'react'
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import ApiWorker from './ApiWorker?worker'
@@ -10,30 +9,6 @@ function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   if (vin) {
-  //     // creates a new worker
-  //     // const worker = new Worker('worker-loader!./ApiWorker.js');
-  //     const worker = new ApiWorker();
-
-  //     worker.onmessage = (event) => {
-  //       const { type, data: workerData, error: workerError } = event.data;
-
-  //       if (type === 'success') {
-  //         setData(workerData);
-  //       } else if (type === 'error') {
-  //         setError(workerError);
-  //       }
-  // };
-
-  //     // Post a message to the worker to start fetching data
-  //     worker.postMessage({ vin, apiKey: '9ec4c15cdemshb05293c223ed1a5p1606d9jsn3a2e64e4493a' });
-
-  //     // Cleanup: terminate the worker when it's no longer needed
-  //     return () => worker.terminate();
-  //   }
-  // }, [vin]);
-
   const handleChange = (event) => {
     setVin(event.target.value);
   };
@@ -42,6 +17,8 @@ function App() {
     event.preventDefault();
     if (vin) {
       const worker = new ApiWorker();
+      const apiKey = import.meta.env.VITE_API_KEY;
+
       try {
         const result = await new Promise((resolve, reject) => {
           worker.onmessage = (event) => {
@@ -53,7 +30,7 @@ function App() {
             }
             worker.terminate();
           };
-          worker.postMessage({ vin, apiKey: '9ec4c15cdemshb05293c223ed1a5p1606d9jsn3a2e64e4493a'})
+          worker.postMessage({ vin, apiKey: apiKey})
         });
         setData(result.data);
       } catch (error) {
@@ -61,24 +38,8 @@ function App() {
       }
     }
   };
-  //     worker.onmessage = (event) => {
-  //       const { type, data: workerData, error: workerError } = event.data;
-  //       if (type === 'success') {
-  //         setData(workerData);
-  //       } else if (type === 'error') {
-  //         setError(workerError);
-  //       }
-  //       // Cleanup: terminate the worker when it's no longer needed
-  //       worker.terminate();
-  //     };
-  //     // Post a message to the worker to start fetching data
-  //     worker.postMessage({ vin, apiKey: '9ec4c15cdemshb05293c223ed1a5p1606d9jsn3a2e64e4493a' });
-  //   }
-  // };
-  console.log(data);
 
   const NoVin = () => <p>type in VIN above to see results</p>;
-
 
   const InfoCard = ({ title, value }) => (
     <div className="info-card">
@@ -127,4 +88,3 @@ return (
 }
 
 export default App
-//http://localhost:5173/?
